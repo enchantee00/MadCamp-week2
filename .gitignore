@@ -1,15 +1,37 @@
+# for game
+
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# .gitignore 파일
+
+# Python 관련
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 환경 설정
+.venv/
+venv/
+ENV/
+env/
+
+# 운영체제 관련
+.DS_Store
+
+# IDE 관련
+.idea/
+.vscode/
+
+# 환경 변수 파일 (서버에서 직접 설정)
+.env
+
