@@ -1,0 +1,15 @@
+cookie:
+  expiry_days: 0
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    Gyeom:
+      name: Gyeom
+      password: $2b$12$b4HsAfWF0ki1LEpeZVEVIulU0HWYenwEURh3fSTq6tqkkB23op6MW
+    Yoon:
+      name: Yoon
+      password: $2b$12$T1aEq2S7PA4DrZZgntixZ.Rj863h9FhoR8Pqd68D7swtF3lHBOjna
+pre-authorized:
+  emails:
+  - melsby@gmail.com
