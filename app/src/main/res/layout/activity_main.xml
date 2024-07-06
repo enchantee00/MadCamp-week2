@@ -32,8 +32,8 @@
 
             <ImageView
                 android:id="@+id/playButtonImage"
-                android:layout_width="220dp"
-                android:layout_height="173dp"
+                android:layout_width="191dp"
+                android:layout_height="150dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/button_shape"/>
 
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Play!"
-                android:textSize="35sp"
+                android:textSize="32sp"
                 android:textColor="@android:color/black"
                 android:fontFamily="@font/blobtastics"
                 android:layout_centerInParent="true"/>
@@ -61,8 +61,8 @@
 
             <ImageView
                 android:id="@+id/recordButtonImage"
-                android:layout_width="220dp"
-                android:layout_height="173dp"
+                android:layout_width="191dp"
+                android:layout_height="150dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/button_shape"/>
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Record"
-                android:textSize="35sp"
+                android:textSize="32sp"
                 android:textColor="@android:color/black"
                 android:fontFamily="@font/blobtastics"
                 android:layout_centerInParent="true"/>

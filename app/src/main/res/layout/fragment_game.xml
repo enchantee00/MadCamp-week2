@@ -16,8 +16,117 @@
         android:fontFamily="@font/blobtastics"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/levelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lv.1"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/blobtastics"
+        android:layout_below="@id/lifeLayout"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="10dp"/>
+
+
+    <ImageView
+        android:id="@+id/itemSlowDown"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/levelText"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="28dp"
+        android:src="@drawable/item_slowdown" />
+
+    <TextView
+        android:id="@+id/itemSlowDownCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/itemSlowDown"
+        android:layout_alignTop="@+id/itemSlowDown"
+        android:layout_marginEnd="-15dp"
+        android:layout_marginTop="-5dp"
+        android:fontFamily="@font/blobtastics"
+        android:text="x3"
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/itemNoBomb"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/itemSlowDown"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="28dp"
+        android:src="@drawable/item_nobomb" />
+
+    <TextView
+        android:id="@+id/itemNoBombCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/itemNoBomb"
+        android:layout_alignTop="@+id/itemNoBomb"
+        android:layout_marginEnd="-17dp"
+        android:layout_marginTop="-10dp"
+        android:fontFamily="@font/blobtastics"
+        android:text="x3"
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/itemTriplePoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemNoBomb"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/blobtastics"
+        android:text="x3"
+        android:textColor="@android:color/black"
+        android:textSize="21sp" />
+
+    <TextView
+        android:id="@+id/itemTriplePointsCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/itemTriplePoints"
+        android:layout_alignTop="@+id/itemTriplePoints"
+        android:layout_marginEnd="-14dp"
+        android:layout_marginTop="-12dp"
+        android:fontFamily="@font/blobtastics"
+        android:text="x3"
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/itemBiggerFood"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/itemTriplePoints"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/item_biggerfood" />
+
+    <TextView
+        android:id="@+id/itemBiggerFoodCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/itemBiggerFood"
+        android:layout_alignTop="@+id/itemBiggerFood"
+        android:layout_marginEnd="-11dp"
+        android:layout_marginTop="-8dp"
+        android:fontFamily="@font/blobtastics"
+        android:text="x3"
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:id="@+id/lifeLayout"
@@ -26,7 +135,8 @@
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp">
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
 
         <ImageView
             android:id="@+id/life1"
@@ -137,5 +247,20 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"/>
+
+    <!--<TextView
+        android:id="@+id/backToMainButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ᐊ Main"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/blobtastics"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"/>-->
 
 </RelativeLayout>
