@@ -1,5 +1,5 @@
 CREATE TABLE `users` (
-  `id` integer PRIMARY KEY,
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   `username` varchar(255),
   `password` varchar(255),
   `role` varchar(255),
@@ -11,45 +11,41 @@ CREATE TABLE `users` (
   `item_no_bomb` integer,
   `item_big_size` integer,
   `item_triple_points` integer,
-  `total_duaration` integer,
+  `total_duration` timestamp,
   `created_at` timestamp
 );
 
 CREATE TABLE `event_item_slow_down` (
-  `id` integer,
-  `turn_id` integer,
-  `user_id` integer,
-  `pressed_ts` timestamp,
-  PRIMARY KEY (`id`, `turn_id`)
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `turn_id` integer NOT NULL,
+  `user_id` integer NOT NULL,
+  `pressed_ts` timestamp
 );
 
 CREATE TABLE `event_item_no_bomb` (
-  `id` integer,
-  `turn_id` integer,
-  `user_id` integer,
-  `pressed_ts` timestamp,
-  PRIMARY KEY (`id`, `turn_id`)
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `turn_id` integer NOT NULL,
+  `user_id` integer NOT NULL,
+  `pressed_ts` timestamp
 );
 
 CREATE TABLE `event_item_big_size` (
-  `id` integer,
-  `turn_id` integer,
-  `user_id` integer,
-  `pressed_ts` timestamp,
-  PRIMARY KEY (`id`, `turn_id`)
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `turn_id` integer NOT NULL,
+  `user_id` integer NOT NULL,
+  `pressed_ts` timestamp
 );
 
 CREATE TABLE `event_item_triple_points` (
-  `id` integer,
-  `turn_id` integer,
-  `user_id` integer,
-  `pressed_ts` timestamp,
-  PRIMARY KEY (`id`, `turn_id`)
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `turn_id` integer NOT NULL,
+  `user_id` integer NOT NULL,
+  `pressed_ts` timestamp
 );
 
 CREATE TABLE `event_turn` (
-  `id` integer PRIMARY KEY,
-  `user_id` integer,
+  `id` integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `user_id` integer NOT NULL,
   `turn_duration` timestamp
 );
 
