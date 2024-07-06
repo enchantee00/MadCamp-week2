@@ -1,7 +1,6 @@
 package com.example.madcamp_week2_game;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import java.util.Random;
 
@@ -58,7 +56,6 @@ public class GameFragment extends Fragment {
     private Runnable foodDropRunnable;
     private TextView scoreText;
     private TextView levelText;
-    // private TextView backToMainButton;
     private int score = 0;
     private int lives = 5;
     private int level = 1;
@@ -192,8 +189,7 @@ public class GameFragment extends Fragment {
         });
 
         itemNoBomb.setOnClickListener(v -> {
-            //if (level >= 4 && !isItemNoBombActive && itemNoBombCount > 0) {
-            if (!isItemNoBombActive && itemNoBombCount > 0) {
+            if (level >= 4 && !isItemNoBombActive && itemNoBombCount > 0) {
                 isItemNoBombActive = true;
                 itemNoBombCount--;
                 itemNoBomb.setImageResource(R.drawable.item_nobomb_gray);
@@ -223,7 +219,6 @@ public class GameFragment extends Fragment {
         });
 
         itemBiggerFood.setOnClickListener(v -> {
-            //if (level >= 4 && !isItemNoBombActive && itemNoBombCount > 0) {
             if (!isItemBiggerFoodActive && itemBiggerFoodCount > 0) {
                 isItemBiggerFoodActive = true;
                 itemBiggerFoodCount--;
@@ -330,7 +325,6 @@ public class GameFragment extends Fragment {
                             Log.d(TAG, "Food removed");
                         })
                         .start();
-
             }
         });
 
@@ -465,7 +459,6 @@ public class GameFragment extends Fragment {
         }
     }
 
-
     private void updateScore() {
         scoreText.setText("Score: " + score);
     }
@@ -482,34 +475,22 @@ public class GameFragment extends Fragment {
             return;
         }
 
-        int newLevel;
-        if (score >= 100) {
+        int newLevel;if (score >= 1500) {
             newLevel = 5;
-        } else if (score >= 70) {
+        } else if (score >= 1000) {
             newLevel = 4;
-        } else if (score >= 40) {
+        } else if (score >= 600) {
             newLevel = 3;
-        } else if (score >= 20) {
+        } else if (score >= 300) {
             newLevel = 2;
         } else {
             newLevel = 1;
         }
-        /*if (score >= 1000) {
-            newLevel = 5;
-        } else if (score >= 700) {
-            newLevel = 4;
-        } else if (score >= 400) {
-            newLevel = 3;
-        } else if (score >= 200) {
-            newLevel = 2;
-        } else {
-            newLevel = 1;
-        }*/ // temporarily deleted for test
 
         if (newLevel != level) {
             level = newLevel;
             levelText.setText("Lv." + level);
-            changeSpeed(); // temporarily deleted for test
+            changeSpeed();
         }
     }
 
