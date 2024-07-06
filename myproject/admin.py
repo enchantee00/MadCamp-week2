@@ -8,7 +8,7 @@ import requests
 st.title("Hello Streamlit")
 
 # Django API 엔드포인트
-api_url = "http://localhost:8000/api/items/"
+api_url = "http://0.0.0.0:80/api/items/"
 
 # API 요청 보내기
 response = requests.get(api_url)
