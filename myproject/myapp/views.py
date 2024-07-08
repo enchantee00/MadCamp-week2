@@ -5,23 +5,12 @@ from rest_framework import status
 from .models import User, EventTurn, EventItemSlowDown, EventItemBigSize, EventItemNoBomb, EventItemTriplePoints
 from .serializers import UserSerializer, EventItemBigSizeSerializer, EventItemNoBombSerializer, EventItemSlowDownSerializer, EventItemTriplePointsSerializer, EventTurnSerializer
 from datetime import timedelta
+import pymysql
+from django.conf import settings
 
 def milliseconds_to_timedelta(milliseconds):
     return timedelta(milliseconds=milliseconds)
 
-#Web
-class LoginView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        try:
-            user = User.objects.get(username=username)
-            if check_password(password, user.password):
-                return Response({"status": "success", "user_id": user.id})
-            else:
-                return Response({"status": "fail", "message": "Incorrect password."}, status=status.HTTP_401_UNAUTHORIZED)
-        except User.DoesNotExist:
-            return Response({"status": "fail", "message": "User does not exist."}, status=status.HTTP_401_UNAUTHORIZED)
 
 # 예를 들어, User 목록을 가져오는 뷰를 추가할 수 있습니다.
 class UserListView(APIView):
@@ -119,17 +108,18 @@ class GameEndView(APIView): #게임 끝낼 시
             return Response({"status": "fail", "message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
         
         
-        # 시리얼라이저를 통한 User 업데이트
+        # 시리얼라이저를 통한 User 업데이트 
         total_item_used = item_slow_down_used + item_no_bomb_used + item_big_size_used + item_triple_points_used
         user_data = {
             'play_count': user.play_count + 1,
             'best_score': score if user.best_score < score else user.best_score,
-            'item_count': user.item_count - total_item_used,
+            'item_count': total_item_used,
             'total_duration': user.total_duration + turn_duration,
-            'item_slow_down': user.item_slow_down - int(item_slow_down_used),
-            'item_no_bomb': user.item_no_bomb - int(item_no_bomb_used),
-            'item_big_size': user.item_big_size - int(item_big_size_used),
-            'item_triple_points': user.item_triple_points - int(item_triple_points_used)
+            'item_slow_down': int(item_slow_down_used),
+            'item_no_bomb': int(item_no_bomb_used),
+            'item_big_size': int(item_big_size_used),
+            'item_triple_points': int(item_triple_points_used),
+            'point': user.point + score
         }
         user_serializer = UserSerializer(user, data=user_data, partial=True)
         if user_serializer.is_valid():
@@ -200,9 +190,98 @@ class GameItemBuyView(APIView): #아이템 구입 시
         else:
             return Response({"status": "fail", "message": "Invalid item ID."}, status=status.HTTP_400_BAD_REQUEST)
 
+class AppLoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            user = User.objects.get(role='player', username=username)
+            if check_password(password, user.password):
+                response_data = {
+                    "username": user.username,
+                    "best_score": user.best_score,
+                    "point": user.point,
+                    "item_slow_down": user.item_slow_down,
+                    "item_no_bomb": user.item_no_bomb,
+                    "item_triple_points": user.item_triple_points,
+                    "item_big_size": user.item_big_size
+                }
+                return Response({"status": "success", "user_id": user.id, **response_data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": "fail", "message": "Invalid password"}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"status": "fail", "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    
+#Web
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            user = User.objects.get(role='admin', username=username)
+            if check_password(password, user.password):
+                return Response({"status": "success", "user_id": user.id})
+            else:
+                return Response({"status": "fail", "message": "Incorrect password."}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"status": "fail", "message": "User does not exist."}, status=status.HTTP_401_UNAUTHORIZED)
         
+class Item1PressedView(APIView):
+    def get(self, request):
+        item_slow_down = EventItemSlowDown.objects.all()
+        serializer = EventItemSlowDownSerializer(item_slow_down, many=True)
+        return Response(serializer.data)
 
+class Item2PressedView(APIView):
+    def get(self, request):
+        item_no_bomb = EventItemNoBomb.objects.all()
+        serializer = EventItemNoBombSerializer(item_no_bomb, many=True)
+        return Response(serializer.data)
+
+class Item3PressedView(APIView):
+    def get(self, request):
+        item_big_size = EventItemBigSize.objects.all()
+        serializer = EventItemBigSizeSerializer(item_big_size, many=True)
+        return Response(serializer.data)
+    
+class Item4PressedView(APIView):
+    def get(self, request):
+        item_triple_points = EventItemTriplePoints.objects.all()
+        serializer = EventItemTriplePointsSerializer(item_triple_points, many=True)
+        return Response(serializer.data)
+
+
+class QueryView(APIView):
+    def post(self, request):
+        query = request.data.get('query')
+
+        if not query:
+            return Response({"error": "Query is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 데이터베이스 연결 설정
+        db_settings = settings.DATABASES['default']
+        connection = pymysql.connect(
+            host=db_settings['HOST'],
+            user=db_settings['USER'],
+            password=db_settings['PASSWORD'],
+            db=db_settings['NAME'],
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                result = cursor.fetchall()
+            connection.commit()
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        finally:
+            connection.close()
+
+        return Response({"result": result}, status=status.HTTP_200_OK)
         
-
-
+        
+        
         
