@@ -1,16 +1,5 @@
-# # myapp/models.py
-
-# from django.db import models
-
-# class Item(models.Model):
-#     name = models.CharField(max_length=100)
-#     description = models.TextField()
-
-#     def __str__(self):
-#         return self.name
-
-
 from django.db import models
+from django.utils import timezone
 
 class User(models.Model):
     username = models.CharField(max_length=255)
@@ -24,8 +13,47 @@ class User(models.Model):
     item_no_bomb = models.IntegerField(default=0)
     item_big_size = models.IntegerField(default=0)
     item_triple_points = models.IntegerField(default=0)
-    total_duration = models.DateTimeField(auto_now_add=True)
+    total_duration = models.DurationField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'users'
+
+class EventTurn(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    turn_duration = models.DurationField()
+
+    class Meta:
+        db_table = 'event_turn'
+
+class EventItemSlowDown(models.Model):
+    turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    pressed_ts = models.DateTimeField()
+
+    class Meta:
+        db_table = 'event_item_slow_down'
+
+class EventItemNoBomb(models.Model):
+    turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    pressed_ts = models.DateTimeField()
+
+    class Meta:
+        db_table = 'event_item_no_bomb'
+
+class EventItemBigSize(models.Model):
+    turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    pressed_ts = models.DateTimeField()
+
+    class Meta:
+        db_table = 'event_item_big_size'
+
+class EventItemTriplePoints(models.Model):
+    turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    pressed_ts = models.DateTimeField()
+
+    class Meta:
+        db_table = 'event_item_triple_points'
