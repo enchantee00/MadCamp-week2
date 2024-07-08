@@ -13,16 +13,31 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
+
+import com.google.gson.JsonObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class GameFragment extends Fragment {
 
     private static final String TAG = "MainActivity";
+    private UserDTO user = UserManager.getInstance().getUser();
+    private static final String BASE_URL = "http://172.10.7.97:80/api/";
+
+    private Retrofit retrofit = RetrofitClient.getClient(BASE_URL);
+    private GameApi gameApi = retrofit.create(GameApi.class);
 
     private ImageView player;
     private ImageView ground;
@@ -43,10 +58,10 @@ public class GameFragment extends Fragment {
     private boolean isItemNoBombActive = false;
     private boolean isItemTriplePointsActive = false;
     private boolean isItemBiggerFoodActive = false;
-    private int itemSlowDownCount = 3;
-    private int itemNoBombCount = 3;
-    private int itemTriplePointsCount = 3;
-    private int itemBiggerFoodCount = 3;
+    private int itemSlowDownCount = user.getItem_slow_down_cnt();
+    private int itemNoBombCount = user.getItem_no_bomb_cnt();
+    private int itemTriplePointsCount = user.getItem_triple_points_cnt();
+    private int itemBiggerFoodCount = user.getItem_big_size_cnt();
     private Handler handler = new Handler();
     private Random random = new Random();
 
@@ -64,6 +79,11 @@ public class GameFragment extends Fragment {
     private ImageView[] lifeImages;
     private int pointMultiplier = 1;
 
+    private TurnDTO turn;
+    private int turn_id = 0;
+    private long startTime;
+    private long endTime;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +100,16 @@ public class GameFragment extends Fragment {
         itemTriplePointsCountText = view.findViewById(R.id.itemTriplePointsCountText);
         itemBiggerFood = view.findViewById(R.id.itemBiggerFood);
         itemBiggerFoodCountText = view.findViewById(R.id.itemBiggerFoodCountText);
+
+        updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
+        updateItemCount(itemNoBomb, itemNoBombCountText, itemNoBombCount);
+        if (itemTriplePointsCount > 0) {
+            itemTriplePointsCountText.setText("x" + itemTriplePointsCount);
+        } else {
+            itemTriplePoints.setVisibility(View.GONE);
+            itemTriplePointsCountText.setVisibility(View.GONE);
+        }
+        updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
 
         rootLayout = view.findViewById(R.id.rootLayout);
         scoreText = view.findViewById(R.id.scoreText);
@@ -177,6 +207,16 @@ public class GameFragment extends Fragment {
             }, 100);
         });
 
+//        itemSlowDown.setOnClickListener(v -> {
+//            if (!isItemSlowDownActive && itemSlowDownCount > 0) {
+//                isItemSlowDownActive = true;
+//                itemSlowDownCount--;
+//                itemSlowDown.setImageResource(R.drawable.item_slowdown_gray);
+//                itemSlowDownCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
+//                updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
+//                slowDownFoods();
+//            }
+//        });
         itemSlowDown.setOnClickListener(v -> {
             if (!isItemSlowDownActive && itemSlowDownCount > 0) {
                 isItemSlowDownActive = true;
@@ -184,7 +224,29 @@ public class GameFragment extends Fragment {
                 itemSlowDown.setImageResource(R.drawable.item_slowdown_gray);
                 itemSlowDownCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
+
                 slowDownFoods();
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+                String pressed_ts = now.format(formatter);
+
+                if (user != null) {
+                    RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 1);
+                    Call<Void> call = gameApi.itemClick(requestItemClick);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -195,7 +257,29 @@ public class GameFragment extends Fragment {
                 itemNoBomb.setImageResource(R.drawable.item_nobomb_gray);
                 itemNoBombCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 updateItemCount(itemNoBomb, itemNoBombCountText, itemNoBombCount);
+
                 activateNoBombShield();
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+                String pressed_ts = now.format(formatter);
+
+                if (user != null) {
+                    RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 2);
+                    Call<Void> call = gameApi.itemClick(requestItemClick);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -215,6 +299,27 @@ public class GameFragment extends Fragment {
                 }
 
                 activateTriplePoints();
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+                String pressed_ts = now.format(formatter);
+
+                if (user != null) {
+                    RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 4);
+                    Call<Void> call = gameApi.itemClick(requestItemClick);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -226,6 +331,27 @@ public class GameFragment extends Fragment {
                 itemBiggerFoodCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
                 activateBiggerFood();
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+                String pressed_ts = now.format(formatter);
+
+                if (user != null) {
+                    RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 3);
+                    Call<Void> call = gameApi.itemClick(requestItemClick);
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -252,6 +378,28 @@ public class GameFragment extends Fragment {
         isGameStarted = true;
         isGameRunning = true;
         initializeGame();
+        startTime = System.currentTimeMillis();
+
+        if (user != null) {
+            RequestTurnStart requestTurnStart = new RequestTurnStart(user.getId(), 1);
+            Call<JsonObject> call = gameApi.startTurn(requestTurnStart);
+            call.enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        JsonObject jsonResponse = response.body();
+                        turn = new TurnDTO(jsonResponse.get("turn_id").getAsInt(), user.getId(), startTime);
+                    } else {
+                        Toast.makeText(getContext(), "Failed to start game", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         Log.d(TAG, "Game started");
         foodDropRunnable = new Runnable() {
@@ -271,6 +419,42 @@ public class GameFragment extends Fragment {
         isGameStarted = false;
         isGameRunning = false;
         Log.d(TAG, "Game stopped");
+        endTime = System.currentTimeMillis();
+        turn.setEndTime(endTime);
+        Log.d(TAG, "Game duration: " + turn.getTurn_duration() + " milliseconds");
+        user.setBest_score(score);
+        user.addPoint(score);
+        user.setItem_slow_down_cnt(itemSlowDownCount);
+        user.setItem_no_bomb_cnt(itemNoBombCount);
+        user.setItem_triple_points_cnt(itemTriplePointsCount);
+        user.setItem_big_size_cnt(itemBiggerFoodCount);
+
+        if (user != null) {
+            RequestTurnEnd requestTurnEnd = new RequestTurnEnd(
+                    user.getId(),
+                    turn.getId(),
+                    turn.getTurn_duration(),
+                    user.getItem_slow_down_cnt(),
+                    user.getItem_no_bomb_cnt(),
+                    user.getItem_big_size_cnt(),
+                    user.getItem_triple_points_cnt(),
+                    score
+            );
+            Call<Void> call = gameApi.endTurn(requestTurnEnd);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                }
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        Log.d(TAG, "Game Item Counts = " + itemSlowDownCount +", "+ itemNoBombCount +", "+ itemTriplePointsCount +", " + itemBiggerFoodCount);
+        Log.d(TAG, "User Item Counts = " + user.getItem_slow_down_cnt() +", "+ user.getItem_no_bomb_cnt() +", "+ user.getItem_triple_points_cnt() +", " + user.getItem_big_size_cnt());
+
         handler.removeCallbacks(foodDropRunnable);
 
         for (int i = rootLayout.getChildCount() - 1; i >= 0; i--) {
@@ -325,6 +509,7 @@ public class GameFragment extends Fragment {
                             Log.d(TAG, "Food removed");
                         })
                         .start();
+                Log.d(TAG, "Current drop speed: " + dropSpeed);
             }
         });
 
@@ -355,17 +540,23 @@ public class GameFragment extends Fragment {
         }, 50);
     }
 
+
     private void slowDownFoods() {
+        int initialLevel = level;
+        long initialSpeed = dropSpeed;
+
         for (int i = 0; i < rootLayout.getChildCount(); i++) {
             View view = rootLayout.getChildAt(i);
             if (view.getTag() != null) {
                 float remainingDistance = rootLayout.getHeight() - view.getY();
-                long newDuration = (long) (remainingDistance / rootLayout.getHeight() * dropSpeed * 2);
+                long newDuration = (long) (remainingDistance / rootLayout.getHeight() * initialSpeed * 2);
                 view.animate().cancel();
                 view.animate().translationY(rootLayout.getHeight() + 100).setDuration(newDuration).start();
             }
         }
-        dropSpeed = (long) (dropSpeed * 2);
+        Log.d(TAG, "initial drop speed: " + dropSpeed);
+        dropSpeed = (long) (initialSpeed * 2);
+        Log.d(TAG, "changed drop speed: " + dropSpeed);
 
         handler.postDelayed(() -> {
             isItemSlowDownActive = false;
@@ -378,7 +569,9 @@ public class GameFragment extends Fragment {
                     view.animate().translationY(rootLayout.getHeight() + 100).setDuration(newDuration).start();
                 }
             }
+            Log.d(TAG, "current level: " + level + "\nslow down activated drop speed: " + dropSpeed);
             changeSpeed();
+            Log.d(TAG, "current level: " + level + "\nslow down deactivated drop speed: " + dropSpeed);
             updateItemState(itemSlowDown, itemSlowDownCountText, itemSlowDownCount, R.drawable.item_slowdown, R.drawable.item_slowdown_gray);
         }, 10000); // for 10 seconds
     }
@@ -495,7 +688,12 @@ public class GameFragment extends Fragment {
     }
 
     private void changeSpeed() {
+        Log.d(TAG, "drop speed before being changed: " + dropSpeed);
         switch (level) {
+            case 1:
+                dropSpeed = 3000;
+                dropInterval = 1000;
+                break;
             case 2:
                 dropSpeed = 2700;
                 dropInterval = 800;
@@ -510,6 +708,7 @@ public class GameFragment extends Fragment {
                 dropInterval = 600;
                 break;
         }
+        Log.d(TAG, "drop speed after being changed: " + dropSpeed);
     }
 
     private void loseLife() {

@@ -30,11 +30,11 @@ public class EmptyFragment extends Fragment {
 
     private void fetchData() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.10.7.97:80")
+                .baseUrl("http://172.10.7.97:80/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        GameApi jsonPlaceHolderApi = retrofit.create(GameApi.class);
 
         retrofit2.Call<List<Post>> call = jsonPlaceHolderApi.getPosts();
 

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         recordButtonLayout.setOnClickListener(v -> {
             v.startAnimation(clickAnimation);
             v.postDelayed(() -> {
-                loadFragment(new EmptyFragment());
+                loadFragment(new RecordFragment());
                 buttonLayout.setVisibility(View.GONE);
                 fragmentContainer.setVisibility(View.VISIBLE);
             }, 100);

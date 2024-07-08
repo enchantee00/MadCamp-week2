@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/recordBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/record_background" />
+
+    <ImageView
+        android:id="@+id/characterImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/character_mouth_open" />
+
+    <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/characterImageView"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/blobtastics"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Username" />
+
+    <TextView
+        android:id="@+id/bestScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userNameTextView"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/blobtastics"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:text="Best Score: 0"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/pointTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bestScoreTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/blobtastics"
+        android:textColor="@android:color/black"
+        android:text="Points: 0"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/itemLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pointTextView"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:fontFamily="@font/blobtastics"
+        android:textColor="@android:color/black"
+        android:text="Items:"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/itemLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemLabelTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/item1Layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="4dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="10dp">
+
+            <ImageView
+                android:id="@+id/itemSlowDownImageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/item_slowdown" />
+
+            <TextView
+                android:id="@+id/itemSlowDownCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/itemSlowDownImageView"
+                android:layout_alignEnd="@+id/itemSlowDownImageView"
+                android:layout_marginEnd="-20dp"
+                android:layout_marginTop="-8dp"
+                android:fontFamily="@font/blobtastics"
+                android:text="x3"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemSlowDownTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/itemSlowDownImageView"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="18dp"
+                android:fontFamily="@font/blobtastics"
+                android:text="Slow\nDown"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/itemSlowDownPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@id/itemSlowDownBuyCount"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:fontFamily="@font/blobtastics"
+                android:padding="4dp"
+                android:text="+"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemSlowDownBuyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/itemSlowDownMinus"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="0"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemSlowDownMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/buyItemSlowDownButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="-"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemSlowDownPriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/blobtastics"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="73dp"
+                android:layout_marginTop="7dp"
+                android:padding="2dp"
+                android:text="100p"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/buyItemSlowDownButtonBackground"
+                android:layout_width="67dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/button_shape" />
+
+            <Button
+                android:id="@+id/buyItemSlowDownButton"
+                android:layout_width="67dp"
+                android:layout_height="33dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/blobtastics"
+                android:padding="0dp"
+                android:text="Buy"
+                android:textColor="@android:color/black"
+                android:shadowColor="#FF000000" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/item2Layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="4dp"
+            android:layout_below="@id/item1Layout"
+            android:paddingLeft="16dp"
+            android:paddingRight="10dp">
+
+            <ImageView
+                android:id="@+id/itemNoBombImageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/item_nobomb" />
+
+            <TextView
+                android:id="@+id/itemNoBombCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/itemNoBombImageView"
+                android:layout_alignEnd="@+id/itemNoBombImageView"
+                android:layout_marginEnd="-20dp"
+                android:layout_marginTop="-8dp"
+                android:fontFamily="@font/blobtastics"
+                android:text="x3"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemNoBombTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/itemNoBombImageView"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="18dp"
+                android:text="No\nBomb"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemNoBombPriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/blobtastics"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="73dp"
+                android:layout_marginTop="7dp"
+                android:padding="2dp"
+                android:text="100p"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/itemNoBombPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@id/itemNoBombBuyCount"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:fontFamily="@font/blobtastics"
+                android:padding="4dp"
+                android:text="+"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemNoBombBuyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/itemNoBombMinus"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="0"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemNoBombMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/buyItemNoBombButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="-"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/buyItemNoBombButtonBackground"
+                android:layout_width="67dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/button_shape" />
+
+            <Button
+                android:id="@+id/buyItemNoBombButton"
+                android:layout_width="67dp"
+                android:layout_height="33dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/blobtastics"
+                android:padding="0dp"
+                android:text="Buy"
+                android:textColor="@android:color/black" />
+
+        </RelativeLayout>
+
+        <!-- 아이템 3 -->
+        <RelativeLayout
+            android:id="@+id/item3Layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="4dp"
+            android:layout_below="@id/item2Layout"
+            android:paddingLeft="16dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/itemTriplePointsImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:text="x3"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/itemTriplePointsImageView"
+                android:layout_alignEnd="@+id/itemTriplePointsImageView"
+                android:layout_marginEnd="-22dp"
+                android:layout_marginTop="-15dp"
+                android:fontFamily="@font/blobtastics"
+                android:text="x3"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/itemTriplePointsImageView"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:text="Triple\nPoints"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsPriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/blobtastics"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="73dp"
+                android:layout_marginTop="7dp"
+                android:padding="2dp"
+                android:text="100p"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@id/itemTriplePointsBuyCount"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:fontFamily="@font/blobtastics"
+                android:padding="4dp"
+                android:text="+"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsBuyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/itemTriplePointsMinus"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="0"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemTriplePointsMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/buyItemTriplePointsButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="-"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/buyItemTriplePointsButtonBackground"
+                android:layout_width="67dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/button_shape" />
+
+            <Button
+                android:id="@+id/buyItemTriplePointsButton"
+                android:layout_width="67dp"
+                android:layout_height="33dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/blobtastics"
+                android:padding="0dp"
+                android:text="Buy"
+                android:textColor="@android:color/black" />
+
+        </RelativeLayout>
+
+        <!-- 아이템 4 -->
+        <RelativeLayout
+            android:id="@+id/item4Layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
+            android:layout_below="@id/item3Layout"
+            android:paddingLeft="16dp"
+            android:paddingRight="10dp">
+
+            <ImageView
+                android:id="@+id/itemBiggerFoodImageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/item_biggerfood" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/itemBiggerFoodImageView"
+                android:layout_alignEnd="@+id/itemBiggerFoodImageView"
+                android:layout_marginEnd="-20dp"
+                android:layout_marginTop="-8dp"
+                android:fontFamily="@font/blobtastics"
+                android:text="x3"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/itemBiggerFoodImageView"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="18dp"
+                android:text="Bigger\nFood"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodPriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/blobtastics"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="73dp"
+                android:layout_marginTop="7dp"
+                android:padding="2dp"
+                android:text="100p"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_toStartOf="@id/itemBiggerFoodBuyCount"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:fontFamily="@font/blobtastics"
+                android:padding="4dp"
+                android:text="+"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodBuyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/itemBiggerFoodMinus"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="0"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/itemBiggerFoodMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/buyItemBiggerFoodButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:padding="4dp"
+                android:text="-"
+                android:fontFamily="@font/blobtastics"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/buyItemBiggerFoodButtonBackground"
+                android:layout_width="67dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/button_shape" />
+
+            <Button
+                android:id="@+id/buyItemBiggerFoodButton"
+                android:layout_width="67dp"
+                android:layout_height="33dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/blobtastics"
+                android:padding="0dp"
+                android:text="Buy"
+                android:textColor="@android:color/black" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
