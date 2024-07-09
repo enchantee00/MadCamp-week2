@@ -263,6 +263,7 @@ def show_playtime_item_analysis_page():
     st.write("""
         <div style="font-size:18px;">
         This section provides an analysis of item usage over the duration of the game. The graphs below show how often each item is used at different times during the game. Additionally, SARIMA models are used to forecast future item usage based on the current data.
+        <br><br>
         </div>
     """, unsafe_allow_html=True)
 
@@ -274,61 +275,52 @@ def show_playtime_item_analysis_page():
         "triple points": base_url + "item4/pressed"
     }
 
-    for item, api_url in api_urls.items():
-        df = fetch_data(api_url)
-        if not df.empty:
-            # pressed_ts를 timedelta로 변환
-            df['pressed_ts'] = pd.to_timedelta(df['pressed_ts'])
+    # Select box를 통해 아이템 선택
+    item = st.selectbox("Select an item to analyze", list(api_urls.keys()))
+    api_url = api_urls[item]
 
-            # 데이터의 분포를 확인하여 적절한 주기를 설정
-            total_seconds = df['pressed_ts'].dt.total_seconds()
-            quantiles = total_seconds.quantile([0.25, 0.5, 0.75])
-            q1, median, q3 = quantiles[0.25], quantiles[0.5], quantiles[0.75]
+    df = fetch_data(api_url)
+    if not df.empty:
+        # pressed_ts를 timedelta로 변환
+        df['pressed_ts'] = pd.to_timedelta(df['pressed_ts'])
 
-            # 주기를 15분, 30분, 1시간 등으로 나눔
-            if q3 <= 3600:
-                df['period'] = total_seconds // 900  # 15분 단위
-                period_unit = "15 minutes"
-                periods_per_day = 24 * 4  # 하루에 96개의 15분 단위가 있음
-            elif q3 <= 7200:
-                df['period'] = total_seconds // 1800  # 30분 단위
-                period_unit = "30 minutes"
-                periods_per_day = 24 * 2  # 하루에 48개의 30분 단위가 있음
-            else:
-                df['period'] = total_seconds // 3600  # 1시간 단위
-                period_unit = "1 hour"
-                periods_per_day = 24  # 하루에 24개의 1시간 단위가 있음
+        # 경과 시간을 초 단위로 변환
+        df['total_seconds'] = df['pressed_ts'].dt.total_seconds()
 
-            df['period'] = df['period'].astype(int)
+        # 주기를 30초 단위로 설정
+        df['period'] = df['total_seconds'] // 30  # 30초 단위
+        period_unit = "30 seconds"
+        periods_per_day = (10 * 60) // 30  # 10분에 20개의 30초 단위가 있음
 
-            # 각 주기별 사용 빈도
-            period_usage = df.groupby('period').size().reset_index(name='count')
+        df['period'] = df['period'].astype(int)
 
-            # 데이터가 충분한지 확인
-            if len(period_usage) > 10:
-                # SARIMA 예측
-                forecast, conf_int = forecast_sarima(period_usage['count'])
-                forecast_index = period_usage['period'].iloc[-1] + 1
-                forecast_periods = [(forecast_index + i) % periods_per_day for i in range(len(forecast))]
-                forecast_df = pd.DataFrame({'period': forecast_periods, 'count': forecast})
+        # 각 주기별 사용 빈도
+        period_usage = df.groupby('period').size().reset_index(name='count')
 
-                # 실제 데이터와 예측 데이터 합치기
-                combined_df = pd.concat([period_usage, forecast_df])
+        # 데이터가 충분한지 확인
+        if len(period_usage) > 10:
+            # SARIMA 예측
+            n_periods = periods_per_day  # 예측할 기간 설정
+            forecast, conf_int = forecast_sarima(period_usage['count'], n_periods)
+            forecast_index = period_usage['period'].iloc[-1] + 1
+            forecast_periods = [(forecast_index + i) % periods_per_day for i in range(len(forecast))]
+            forecast_df = pd.DataFrame({'period': forecast_periods, 'count': forecast})
 
-                fig = go.Figure()
-                fig.add_trace(go.Bar(x=period_usage['period'].tolist(), y=period_usage['count'].tolist(), name='Actual', marker_color='#636EFA'))
-                fig.add_trace(go.Scatter(x=forecast_df['period'].tolist(), y=forecast_df['count'].tolist(), mode='lines+markers', name='Forecast', line=dict(color='#EF553B')))
+            # 실제 데이터와 예측 데이터 합치기
+            combined_df = pd.concat([period_usage, forecast_df])
 
-                fig.update_layout(
-                    title=f'Usage of {item} by {period_unit} (Actual vs Forecast)',
-                    xaxis_title=f'Period ({period_unit})',
-                    yaxis_title='Frequency',
-                    legend=dict(x=0.01, y=0.99)
-                )
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=period_usage['period'].tolist(), y=period_usage['count'].tolist(), name='Actual', marker_color='#636EFA'))
+            fig.add_trace(go.Scatter(x=forecast_df['period'].tolist(), y=forecast_df['count'].tolist(), mode='lines+markers', name='Forecast', line=dict(color='#EF553B')))
 
-                st.plotly_chart(fig)
+            fig.update_layout(
+                title=f'Usage of {item} by {period_unit} (Actual vs Forecast)',
+                xaxis_title=f'Period ({period_unit})',
+                yaxis_title='Frequency',
+                legend=dict(x=0.01, y=0.99)
+            )
 
-
+            st.plotly_chart(fig)
 
 def show_item_user_analysis_page():    
     st.title("User Item Distribution")

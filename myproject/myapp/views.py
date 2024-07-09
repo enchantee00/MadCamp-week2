@@ -212,6 +212,23 @@ class AppLoginView(APIView):
                 return Response({"status": "fail", "message": "Invalid password"}, status=status.HTTP_401_UNAUTHORIZED)
         except User.DoesNotExist:
             return Response({"status": "fail", "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class ProfileModifyView(APIView):
+    def patch(self, request):
+        user_id = request.data.get('user_id')
+        name = request.data.get('name')
+        
+        if not user_id or not name:
+            return Response({"status": "fail", "message": "User ID and name are required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.get(id=user_id)
+        user.username = name
+        user.save()
+        
+        serializer = UserSerializer(user)
+        
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
     
 #Web
