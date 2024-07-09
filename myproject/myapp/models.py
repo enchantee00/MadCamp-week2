@@ -22,6 +22,7 @@ class User(models.Model):
 class EventTurn(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
     turn_duration = models.DurationField()
+    turn_start = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = 'event_turn'
@@ -29,15 +30,14 @@ class EventTurn(models.Model):
 class EventItemSlowDown(models.Model):
     turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
-    pressed_ts = models.DateTimeField()
-
+    pressed_ts = models.DurationField(default=timezone.timedelta)  # 변경된 부분
     class Meta:
         db_table = 'event_item_slow_down'
 
 class EventItemNoBomb(models.Model):
     turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
-    pressed_ts = models.DateTimeField()
+    pressed_ts = models.DurationField(default=timezone.timedelta)  # 변경된 부분
 
     class Meta:
         db_table = 'event_item_no_bomb'
@@ -45,7 +45,7 @@ class EventItemNoBomb(models.Model):
 class EventItemBigSize(models.Model):
     turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
-    pressed_ts = models.DateTimeField()
+    pressed_ts = models.DurationField(default=timezone.timedelta)  # 변경된 부분
 
     class Meta:
         db_table = 'event_item_big_size'
@@ -53,7 +53,7 @@ class EventItemBigSize(models.Model):
 class EventItemTriplePoints(models.Model):
     turn = models.ForeignKey(EventTurn, on_delete=models.CASCADE, db_column='turn_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
-    pressed_ts = models.DateTimeField()
+    pressed_ts = models.DurationField(default=timezone.timedelta)  # 변경된 부분
 
     class Meta:
         db_table = 'event_item_triple_points'
