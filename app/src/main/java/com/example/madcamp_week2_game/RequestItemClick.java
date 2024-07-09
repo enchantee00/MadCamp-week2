@@ -4,10 +4,10 @@ public class RequestItemClick {
 
     private int user_id;
     private int turn_id;
-    private String pressed_ts;
+    private long pressed_ts;
     private int item_id;
 
-    public RequestItemClick(int user_id, int turn_id, String pressed_ts, int item_id) {
+    public RequestItemClick(int user_id, int turn_id, long pressed_ts, int item_id) {
         this.user_id = user_id;
         this.turn_id = turn_id;
         this.pressed_ts = pressed_ts;
@@ -22,7 +22,7 @@ public class RequestItemClick {
         return turn_id;
     }
 
-    public String getPressed_ts() {
+    public long getPressed_ts() {
         return pressed_ts;
     }
 

@@ -1,6 +1,5 @@
 package com.example.madcamp_week2_game;
 
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -207,16 +206,6 @@ public class GameFragment extends Fragment {
             }, 100);
         });
 
-//        itemSlowDown.setOnClickListener(v -> {
-//            if (!isItemSlowDownActive && itemSlowDownCount > 0) {
-//                isItemSlowDownActive = true;
-//                itemSlowDownCount--;
-//                itemSlowDown.setImageResource(R.drawable.item_slowdown_gray);
-//                itemSlowDownCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
-//                updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
-//                slowDownFoods();
-//            }
-//        });
         itemSlowDown.setOnClickListener(v -> {
             if (!isItemSlowDownActive && itemSlowDownCount > 0) {
                 isItemSlowDownActive = true;
@@ -227,9 +216,9 @@ public class GameFragment extends Fragment {
 
                 slowDownFoods();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
+                Log.d("millisecs - item1", String.valueOf(pressed_ts));
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 1);
@@ -260,9 +249,8 @@ public class GameFragment extends Fragment {
 
                 activateNoBombShield();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 2);
@@ -300,9 +288,8 @@ public class GameFragment extends Fragment {
 
                 activateTriplePoints();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 4);
@@ -332,9 +319,8 @@ public class GameFragment extends Fragment {
                 updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
                 activateBiggerFood();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 3);
@@ -380,13 +366,20 @@ public class GameFragment extends Fragment {
         initializeGame();
         startTime = System.currentTimeMillis();
 
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        String started_ts = now.format(formatter);
+        Log.d(TAG, started_ts);
+
         if (user != null) {
-            RequestTurnStart requestTurnStart = new RequestTurnStart(user.getId(), 1);
+            RequestTurnStart requestTurnStart = new RequestTurnStart(user.getId(), 1, started_ts);
             Call<JsonObject> call = gameApi.startTurn(requestTurnStart);
+            Log.d("game start request", String.valueOf(call));
             call.enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    Log.d("game start response", response.toString());
+                    if (response.isSuccessful()) {
                         JsonObject jsonResponse = response.body();
                         turn = new TurnDTO(jsonResponse.get("turn_id").getAsInt(), user.getId(), startTime);
                     } else {

@@ -41,7 +41,11 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.recyclerview)
     implementation(libs.okhttp)
+    implementation(libs.naver.oauth)
+    implementation(libs.retrofit2.converter.scalars)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }
