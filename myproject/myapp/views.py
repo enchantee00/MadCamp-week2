@@ -37,7 +37,7 @@ class GameItemClickView(APIView): #각 Item click 시
     def post(self, request):
         user_id = request.data.get('user_id')
         turn_id = request.data.get('turn_id')
-        pressed_ts = request.data.get('pressed_ts')
+        pressed_ts = milliseconds_to_timedelta(int(request.data.get('pressed_ts')))
         item_id = request.data.get('item_id')
 
         if not all([user_id, turn_id, pressed_ts, item_id]):
@@ -70,8 +70,9 @@ class GameStartView(APIView): #게임 시작 시
     def post(self, request):
         user_id = request.data.get('user_id')
         turn_duration = milliseconds_to_timedelta(int(request.data.get('turn_duration')))
+        turn_start = request.data.get('turn_start')
 
-        if not all([user_id, turn_duration]):
+        if not all([user_id, turn_duration, turn_start]):
             return Response({"status": "fail", "message": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -80,7 +81,7 @@ class GameStartView(APIView): #게임 시작 시
             return Response({"status": "fail", "message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
         
         
-        turn = EventTurn.objects.create(user=user, turn_duration=turn_duration)
+        turn = EventTurn.objects.create(user=user, turn_duration=turn_duration, turn_start=turn_start)
         return Response({"status": "success", "turn_id": turn.pk}, status=status.HTTP_201_CREATED)
     
 class GameEndView(APIView): #게임 끝낼 시
@@ -282,6 +283,12 @@ class QueryView(APIView):
 
         return Response({"result": result}, status=status.HTTP_200_OK)
         
+        
+class EventTurnListView(APIView):
+    def get(self, request):
+        turns = EventTurn.objects.all()
+        serializer = EventTurnSerializer(turns, many=True)
+        return Response(serializer.data)
         
         
         

@@ -1,7 +1,7 @@
 # myapp/urls.py
 from django.urls import path, include
 # from rest_framework.routers import DefaultRouter
-from .views import LoginView, UserListView, GameItemClickView, GameStartView, GameEndView, GameItemBuyView, Item1PressedView, Item2PressedView, Item3PressedView, Item4PressedView, AppLoginView, QueryView
+from .views import LoginView, UserListView, GameItemClickView, GameStartView, GameEndView, GameItemBuyView, Item1PressedView, Item2PressedView, Item3PressedView, Item4PressedView, AppLoginView, QueryView, EventTurnListView
 
 # router = DefaultRouter()
 # router.register(r'items', ItemViewSet)
@@ -21,5 +21,6 @@ urlpatterns = [
     path('item3/pressed', Item3PressedView.as_view(), name='item3-pressed'),
     path('item4/pressed', Item4PressedView.as_view(), name='item4-pressed'),
     path('users', UserListView.as_view(), name='user-list'),
-    path('query', QueryView().as_view(), name='query-freely')
+    path('query', QueryView().as_view(), name='query-freely'),
+    path('turn/start', EventTurnListView.as_view(), name='event-turn-list')
 ]
