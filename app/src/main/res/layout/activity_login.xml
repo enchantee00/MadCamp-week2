@@ -2,23 +2,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:padding="16dp">
+
+    <TextView
+        android:id="@+id/TitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:translationY="-130dp"
+        android:translationX="-35dp"
+        android:rotation="-10"
+        android:gravity="center"
+        android:fontFamily="@font/blobtastics"
+        android:text="Yum"
+        android:textColor="@android:color/black"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/TitleText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:translationY="-90dp"
+        android:translationX="30dp"
+        android:rotation="-10"
+        android:gravity="center"
+        android:fontFamily="@font/blobtastics"
+        android:text="Yum!"
+        android:textColor="@android:color/black"
+        android:textSize="48sp" />
 
     <EditText
         android:id="@+id/usernameEditText"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:translationY="-10dp"
+        android:layout_below="@id/TitleText"
+        android:fontFamily="@font/blobtastics"
+        android:hint=" Username"
         android:inputType="text" />
 
     <EditText
         android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:layout_centerHorizontal="true"
+        android:hint=" Password"
+        android:fontFamily="@font/blobtastics"
         android:inputType="textPassword"
-        android:layout_below="@id/usernameEditText"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/usernameEditText" />
 
     <Button
         android:id="@+id/loginButton"
@@ -26,6 +63,11 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/blobtastics"
+        android:padding="0dp"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        style="@style/AppTheme" />
 </RelativeLayout>

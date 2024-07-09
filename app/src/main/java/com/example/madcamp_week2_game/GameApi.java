@@ -28,6 +28,9 @@ public interface GameApi {
     @PATCH("app/turn/end")
     Call<Void> endTurn(@Body RequestTurnEnd requestTurnEnd);
 
+    @PATCH("app/profile")
+    Call<JsonObject> updateUserName(@Body RequestUpdateUser requestUpdateUser);
+
     @PATCH("app/item/buy")
     Call<Void> buyItem(@Body RequestBuyItem requestBuyItem);
 
