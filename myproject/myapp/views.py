@@ -2,8 +2,8 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User, EventTurn, EventItemSlowDown, EventItemBigSize, EventItemNoBomb, EventItemTriplePoints
-from .serializers import UserSerializer, EventItemBigSizeSerializer, EventItemNoBombSerializer, EventItemSlowDownSerializer, EventItemTriplePointsSerializer, EventTurnSerializer
+from .models import User, EventTurn, EventItemSlowDown, EventItemBigSize, EventItemNoBomb, EventItemTriplePoints, Memo
+from .serializers import UserSerializer, EventItemBigSizeSerializer, EventItemNoBombSerializer, EventItemSlowDownSerializer, EventItemTriplePointsSerializer, EventTurnSerializer, MemoSerializer
 from datetime import timedelta
 import pymysql
 from django.conf import settings
@@ -12,27 +12,35 @@ def milliseconds_to_timedelta(milliseconds):
     return timedelta(milliseconds=milliseconds)
 
 
-# 예를 들어, User 목록을 가져오는 뷰를 추가할 수 있습니다.
 class UserListView(APIView):
     def get(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-## App
-# class AppLoginView(APIView):
-#     def post(self, request):
-#         username = request.data.get('username')
-#         password = request.data.get('password')
-#         try:
-#             user = User.objects.get(username=username)
-#             if check_password(password, user.password):
-#                 return Response({"status": "success", "user_id": user.id})
-#             else:
-#                 return Response({"status": "fail", "message": "Incorrect password."}, status=status.HTTP_401_UNAUTHORIZED)
-#         except User.DoesNotExist:
-#             return Response({"status": "fail", "message": "User does not exist."}, status=status.HTTP_401_UNAUTHORIZED)
-
+class AppLoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            user = User.objects.get(role='player', username=username)
+            if check_password(password, user.password):
+                response_data = {
+                    "username": user.username,
+                    "best_score": user.best_score,
+                    "point": user.point,
+                    "item_slow_down": user.item_slow_down,
+                    "item_no_bomb": user.item_no_bomb,
+                    "item_triple_points": user.item_triple_points,
+                    "item_big_size": user.item_big_size
+                }
+                return Response({"status": "success", "user_id": user.id, **response_data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": "fail", "message": "Invalid password"}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"status": "fail", "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
 class GameItemClickView(APIView): #각 Item click 시
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -191,28 +199,6 @@ class GameItemBuyView(APIView): #아이템 구입 시
         else:
             return Response({"status": "fail", "message": "Invalid item ID."}, status=status.HTTP_400_BAD_REQUEST)
 
-class AppLoginView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        try:
-            user = User.objects.get(role='player', username=username)
-            if check_password(password, user.password):
-                response_data = {
-                    "username": user.username,
-                    "best_score": user.best_score,
-                    "point": user.point,
-                    "item_slow_down": user.item_slow_down,
-                    "item_no_bomb": user.item_no_bomb,
-                    "item_triple_points": user.item_triple_points,
-                    "item_big_size": user.item_big_size
-                }
-                return Response({"status": "success", "user_id": user.id, **response_data}, status=status.HTTP_200_OK)
-            else:
-                return Response({"status": "fail", "message": "Invalid password"}, status=status.HTTP_401_UNAUTHORIZED)
-        except User.DoesNotExist:
-            return Response({"status": "fail", "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        
 
 class ProfileModifyView(APIView):
     def patch(self, request):
@@ -307,5 +293,50 @@ class EventTurnListView(APIView):
         serializer = EventTurnSerializer(turns, many=True)
         return Response(serializer.data)
         
-        
-        
+
+class MemoView(APIView):
+    def get(self, request, page=None):
+        if page:
+            memos = Memo.objects.filter(page=page)
+            serializer = MemoSerializer(memos, many=True)
+            return Response(serializer.data)
+        return Response({"error": "Page not specified"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        serializer = MemoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        try:
+            memo = Memo.objects.get(pk=pk)
+        except Memo.DoesNotExist:
+            return Response({"error": "Memo not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = MemoSerializer(memo, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        try:
+            memo = Memo.objects.get(pk=pk)
+        except Memo.DoesNotExist:
+            return Response({"error": "Memo not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = MemoSerializer(memo, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            memo = Memo.objects.get(pk=pk)
+            memo.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Memo.DoesNotExist:
+            return Response({"error": "Memo not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, EventTurn, EventItemSlowDown, EventItemNoBomb, EventItemBigSize, EventItemTriplePoints
+from .models import User, EventTurn, EventItemSlowDown, EventItemNoBomb, EventItemBigSize, EventItemTriplePoints, Memo
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,4 +29,9 @@ class EventItemBigSizeSerializer(serializers.ModelSerializer):
 class EventItemTriplePointsSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventItemTriplePoints
+        fields = '__all__'
+
+class MemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Memo
         fields = '__all__'

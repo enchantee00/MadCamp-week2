@@ -189,16 +189,16 @@ def main_page():
         st.markdown("""
             <h3>Welcome to the Admin Dashboard</h3>
             <p style='font-size:18px;'>
-            Here you can monitor user activity and gain insights into how players interact with the game. 
-            Use the graphs to see the number of users active during different hours of the day, 
-            and leverage forecasts to plan for peak times.
-            </p>
-            <p style='font-size:18px;'>
-            The dashboard also provides detailed analysis of item usage within the game. 
-            By understanding how and when players use certain items, you can make informed decisions 
-            to improve game balance and enhance the overall gaming experience. 
-            Utilize these insights to optimize item availability and effectiveness.
-            </p>
+    Monitor user activity and gain insights into player interactions with the game. 
+    This dashboard offers various data analysis tools to understand user behavior, 
+    track active users by the hour, and leverage forecasts for peak times. Explore different 
+    pages for comprehensive insights into player engagement and activity patterns.
+</p>
+<p style='font-size:18px;'>
+    Analyze item usage within the game to make informed decisions on game balance and enhance the gaming experience. 
+    Freely create, modify, delete, and view memos to keep track of important notes and observations. 
+    Utilize these features to optimize item availability, effectiveness, and streamline administrative tasks.
+</p>
         """, unsafe_allow_html=True)
 
 
@@ -254,7 +254,88 @@ def show_user_activity_page():
             st.write("Not enough data for SARIMA forecasting")
     else:
         st.write("No data available")
+        
+    # 메모지 관리
 
+    page = 1
+    memo_api_url = "http://172.10.7.97:80/api/memos"
+
+
+    # Fetch memos from the API
+    def fetch_memos():
+        response = requests.get(f"{memo_api_url}/page/{page}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return []
+
+    # Add a new memo via the API
+    def add_memo(author, content):
+        response = requests.post(memo_api_url, json={"page": page, "author": author, "content": content})
+        if response.status_code == 201:
+            st.success("Memo added successfully")
+        else:
+            st.error("Failed to add memo")
+
+    # Update an existing memo via the API
+    def update_memo(memo_id, author, content):
+        response = requests.patch(f"{memo_api_url}/{memo_id}", json={"author": author, "content": content})
+        if response.status_code == 200:
+            st.success("Memo updated successfully")
+        else:
+            st.error("Failed to update memo")
+
+    # Delete a memo via the API
+    def delete_memo(memo_id):
+        response = requests.delete(f"{memo_api_url}/{memo_id}")
+        if response.status_code == 204:
+            st.success("Memo deleted successfully")
+        else:
+            st.error("Failed to delete memo")
+
+    # Display memos and provide editing functionality
+    def display_memos():
+        memos = fetch_memos()
+        if memos:  # Fetch된 메모가 있는 경우
+            for index, memo in enumerate(memos):
+                memo_id = memo['id']
+                author = st.text_input(f"Author {index + 1}", memo['author'], key=f"author_{memo_id}")
+                content = st.text_area(f"Content {index + 1}", memo['content'], key=f"content_{memo_id}", height=120)
+                
+                col1, col2, col3 = st.columns([1, 0.1, 1])
+                with col1:
+                    if st.button(f"Save Note", key=f"save_{memo_id}"):
+                        update_memo(memo_id, author, content)
+                        st.experimental_rerun()
+                with col3:
+                    if st.button(f"Delete Note", key=f"delete_{memo_id}"):
+                        delete_memo(memo_id)
+                        st.experimental_rerun()
+                st.markdown("---")
+        else:
+            st.write("No memos")
+
+    # Section to add a new memo
+    def add_new_memo_section():
+        if 'show_new_memo' not in st.session_state:
+            st.session_state.show_new_memo = False
+
+        if st.button("Add Note"):
+            st.session_state.show_new_memo = True
+
+        if st.session_state.show_new_memo:
+            new_author = st.text_input("New Author", key="new_author")
+            new_content = st.text_area("New Content", key="new_content", height=120)
+            if st.button("Save New Note"):
+                add_memo(new_author, new_content)
+                st.session_state.show_new_memo = False
+                st.experimental_rerun()  # Refresh the page to show the new memo
+
+    st.title("Memo")
+    st.markdown("<div style='font-size:18px;'>Manage your memos here:</div> <br>", unsafe_allow_html=True)
+
+    add_new_memo_section()
+    display_memos()
 
 
 def show_playtime_item_analysis_page():    
@@ -321,6 +402,87 @@ def show_playtime_item_analysis_page():
             )
 
             st.plotly_chart(fig)
+            
+    page = 2
+    memo_api_url = "http://172.10.7.97:80/api/memos"
+
+
+    # Fetch memos from the API
+    def fetch_memos():
+        response = requests.get(f"{memo_api_url}/page/{page}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return []
+
+    # Add a new memo via the API
+    def add_memo(author, content):
+        response = requests.post(memo_api_url, json={"page": page, "author": author, "content": content})
+        if response.status_code == 201:
+            st.success("Memo added successfully")
+        else:
+            st.error("Failed to add memo")
+
+    # Update an existing memo via the API
+    def update_memo(memo_id, author, content):
+        response = requests.patch(f"{memo_api_url}/{memo_id}", json={"author": author, "content": content})
+        if response.status_code == 200:
+            st.success("Memo updated successfully")
+        else:
+            st.error("Failed to update memo")
+
+    # Delete a memo via the API
+    def delete_memo(memo_id):
+        response = requests.delete(f"{memo_api_url}/{memo_id}")
+        if response.status_code == 204:
+            st.success("Memo deleted successfully")
+        else:
+            st.error("Failed to delete memo")
+
+    # Display memos and provide editing functionality
+    def display_memos():
+        memos = fetch_memos()
+        if memos:  # Fetch된 메모가 있는 경우
+            for index, memo in enumerate(memos):
+                memo_id = memo['id']
+                author = st.text_input(f"Author {index + 1}", memo['author'], key=f"author_{memo_id}")
+                content = st.text_area(f"Content {index + 1}", memo['content'], key=f"content_{memo_id}", height=120)
+                
+                col1, col2, col3 = st.columns([1, 0.1, 1])
+                with col1:
+                    if st.button(f"Save Note", key=f"save_{memo_id}"):
+                        update_memo(memo_id, author, content)
+                        st.experimental_rerun()
+                with col3:
+                    if st.button(f"Delete Note", key=f"delete_{memo_id}"):
+                        delete_memo(memo_id)
+                        st.experimental_rerun()
+                st.markdown("---")
+        else:
+            st.write("No memos")
+
+    # Section to add a new memo
+    def add_new_memo_section():
+        if 'show_new_memo' not in st.session_state:
+            st.session_state.show_new_memo = False
+
+        if st.button("Add Note"):
+            st.session_state.show_new_memo = True
+
+        if st.session_state.show_new_memo:
+            new_author = st.text_input("New Author", key="new_author")
+            new_content = st.text_area("New Content", key="new_content", height=120)
+            if st.button("Save New Note"):
+                add_memo(new_author, new_content)
+                st.session_state.show_new_memo = False
+                st.experimental_rerun()  # Refresh the page to show the new memo
+
+    st.title("Memo")
+    st.markdown("<div style='font-size:18px;'>Manage your memos here:</div> <br>", unsafe_allow_html=True)
+
+    add_new_memo_section()
+    display_memos()
+
 
 def show_item_user_analysis_page():    
     st.title("User Item Distribution")
@@ -328,6 +490,7 @@ def show_item_user_analysis_page():
     st.write("""
         <div style="font-size:18px;">
         This section provides an analysis of the distribution of item ownership among users. The graphs below show the number of users holding different quantities of each item. This helps in understanding the spread and popularity of items among the player base.
+        <br><br>
         </div>
     """, unsafe_allow_html=True)
 
@@ -336,21 +499,104 @@ def show_item_user_analysis_page():
     df = fetch_data(api_url)
 
     if not df.empty:
-        # 각 아이템별 보유량에 따른 유저 수를 시각화
+        # Select box를 통해 아이템 선택
         items = ["item_slow_down", "item_no_bomb", "item_big_size", "item_triple_points"]
+        selected_item = st.selectbox("Select an item to analyze", items)
+
+        # 선택한 아이템의 보유량에 따른 유저 수를 시각화
+        item_counts = df[selected_item].value_counts().reset_index()
+        item_counts.columns = [selected_item, 'user_count']
         
-        for item in items:
-            item_counts = df[item].value_counts().reset_index()
-            item_counts.columns = [item, 'user_count']
-            fig = px.bar(
-                item_counts,
-                x=item,
-                y='user_count',
-                title=f'User Count by {item}',
-                labels={item: 'Quantity', 'user_count': 'User Count'},
-                color_discrete_sequence=["#636EFA"]
-            )
-            st.plotly_chart(fig)
+        fig = px.bar(
+            item_counts,
+            x=selected_item,
+            y='user_count',
+            title=f'User Count by {selected_item}',
+            labels={selected_item: 'Quantity', 'user_count': 'User Count'},
+            color_discrete_sequence=["#636EFA"]
+        )
+        st.plotly_chart(fig)
+
+    
+    page = 3
+    memo_api_url = "http://172.10.7.97:80/api/memos"
+
+
+    # Fetch memos from the API
+    def fetch_memos():
+        response = requests.get(f"{memo_api_url}/page/{page}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return []
+
+    # Add a new memo via the API
+    def add_memo(author, content):
+        response = requests.post(memo_api_url, json={"page": page, "author": author, "content": content})
+        if response.status_code == 201:
+            st.success("Memo added successfully")
+        else:
+            st.error("Failed to add memo")
+
+    # Update an existing memo via the API
+    def update_memo(memo_id, author, content):
+        response = requests.patch(f"{memo_api_url}/{memo_id}", json={"author": author, "content": content})
+        if response.status_code == 200:
+            st.success("Memo updated successfully")
+        else:
+            st.error("Failed to update memo")
+
+    # Delete a memo via the API
+    def delete_memo(memo_id):
+        response = requests.delete(f"{memo_api_url}/{memo_id}")
+        if response.status_code == 204:
+            st.success("Memo deleted successfully")
+        else:
+            st.error("Failed to delete memo")
+
+    # Display memos and provide editing functionality
+    def display_memos():
+        memos = fetch_memos()
+        if memos:  # Fetch된 메모가 있는 경우
+            for index, memo in enumerate(memos):
+                memo_id = memo['id']
+                author = st.text_input(f"Author {index + 1}", memo['author'], key=f"author_{memo_id}")
+                content = st.text_area(f"Content {index + 1}", memo['content'], key=f"content_{memo_id}", height=120)
+                
+                col1, col2, col3 = st.columns([1, 0.1, 1])
+                with col1:
+                    if st.button(f"Save Note", key=f"save_{memo_id}"):
+                        update_memo(memo_id, author, content)
+                        st.experimental_rerun()
+                with col3:
+                    if st.button(f"Delete Note", key=f"delete_{memo_id}"):
+                        delete_memo(memo_id)
+                        st.experimental_rerun()
+                st.markdown("---")
+        else:
+            st.write("No memos")
+
+    # Section to add a new memo
+    def add_new_memo_section():
+        if 'show_new_memo' not in st.session_state:
+            st.session_state.show_new_memo = False
+
+        if st.button("Add Note"):
+            st.session_state.show_new_memo = True
+
+        if st.session_state.show_new_memo:
+            new_author = st.text_input("New Author", key="new_author")
+            new_content = st.text_area("New Content", key="new_content", height=120)
+            if st.button("Save New Note"):
+                add_memo(new_author, new_content)
+                st.session_state.show_new_memo = False
+                st.experimental_rerun()  # Refresh the page to show the new memo
+
+    st.title("Memo")
+    st.markdown("<div style='font-size:18px;'>Manage your memos here:</div> <br>", unsafe_allow_html=True)
+
+    add_new_memo_section()
+    display_memos()
         
 
 def show_best_score_distribution_page():    
@@ -395,6 +641,86 @@ def show_best_score_distribution_page():
             color_continuous_scale='Viridis'
         )
         st.plotly_chart(fig)
+        
+    page = 4
+    memo_api_url = "http://172.10.7.97:80/api/memos"
+
+
+    # Fetch memos from the API
+    def fetch_memos():
+        response = requests.get(f"{memo_api_url}/page/{page}")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return []
+
+    # Add a new memo via the API
+    def add_memo(author, content):
+        response = requests.post(memo_api_url, json={"page": page, "author": author, "content": content})
+        if response.status_code == 201:
+            st.success("Memo added successfully")
+        else:
+            st.error("Failed to add memo")
+
+    # Update an existing memo via the API
+    def update_memo(memo_id, author, content):
+        response = requests.patch(f"{memo_api_url}/{memo_id}", json={"author": author, "content": content})
+        if response.status_code == 200:
+            st.success("Memo updated successfully")
+        else:
+            st.error("Failed to update memo")
+
+    # Delete a memo via the API
+    def delete_memo(memo_id):
+        response = requests.delete(f"{memo_api_url}/{memo_id}")
+        if response.status_code == 204:
+            st.success("Memo deleted successfully")
+        else:
+            st.error("Failed to delete memo")
+
+    # Display memos and provide editing functionality
+    def display_memos():
+        memos = fetch_memos()
+        if memos:  # Fetch된 메모가 있는 경우
+            for index, memo in enumerate(memos):
+                memo_id = memo['id']
+                author = st.text_input(f"Author {index + 1}", memo['author'], key=f"author_{memo_id}")
+                content = st.text_area(f"Content {index + 1}", memo['content'], key=f"content_{memo_id}", height=120)
+                
+                col1, col2, col3 = st.columns([1, 0.1, 1])
+                with col1:
+                    if st.button(f"Save Note", key=f"save_{memo_id}"):
+                        update_memo(memo_id, author, content)
+                        st.experimental_rerun()
+                with col3:
+                    if st.button(f"Delete Note", key=f"delete_{memo_id}"):
+                        delete_memo(memo_id)
+                        st.experimental_rerun()
+                st.markdown("---")
+        else:
+            st.write("No memos")
+
+    # Section to add a new memo
+    def add_new_memo_section():
+        if 'show_new_memo' not in st.session_state:
+            st.session_state.show_new_memo = False
+
+        if st.button("Add Note"):
+            st.session_state.show_new_memo = True
+
+        if st.session_state.show_new_memo:
+            new_author = st.text_input("New Author", key="new_author")
+            new_content = st.text_area("New Content", key="new_content", height=120)
+            if st.button("Save New Note"):
+                add_memo(new_author, new_content)
+                st.session_state.show_new_memo = False
+                st.experimental_rerun()  # Refresh the page to show the new memo
+
+    st.title("Memo")
+    st.markdown("<div style='font-size:18px;'>Manage your memos here:</div> <br>", unsafe_allow_html=True)
+
+    add_new_memo_section()
+    display_memos()
 
 def show_user_management_page():    
     st.title("User Management")
@@ -454,8 +780,6 @@ def show_query_page():
         else:
             st.warning("Please enter a query.")
             
-
-
 
 def show_visualization_page():
     st.sidebar.markdown("""
