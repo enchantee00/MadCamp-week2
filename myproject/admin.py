@@ -7,6 +7,7 @@ import seaborn as sns
 from http.cookies import SimpleCookie
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+import warnings
 
 
 # HTTP Server 시작
@@ -31,6 +32,11 @@ thread.start()
 
 
 base_url = "http://172.10.7.97:80/api/"
+# warnings.filterwarnings("ignore", message="""Please replace st.experimental_get_query_params with st.query_params.
+
+# st.experimental_get_query_params will be removed after 2024-04-11.
+
+# Refer to our docs page for more information.""")
 
 # 쿠키 설정 및 읽기 함수
 def set_cookie(key, value):
@@ -66,11 +72,11 @@ if "logged_in" not in st.session_state:
     st.session_state["user_id"] = None
 
 # 쿠키에서 로그인 상태 확인
-if not st.session_state["logged_in"]:
-    user_id_cookie = get_cookie("user_id")
-    if user_id_cookie:
-        st.session_state["logged_in"] = True
-        st.session_state["user_id"] = user_id_cookie
+# if not st.session_state["logged_in"]:
+    # user_id_cookie = get_cookie("user_id")
+    # if user_id_cookie:
+    #     st.session_state["logged_in"] = True
+    #     st.session_state["user_id"] = user_id_cookie
 
 #------------------------------------------------------------
         
@@ -138,6 +144,7 @@ st.markdown("""
     
 # pages
 def show_login_page():
+    
     st.title("Login Page")
 
     # 사용자 입력 받기
@@ -158,7 +165,7 @@ def show_login_page():
                 if data.get("status") == "success":
                     st.session_state["user_id"] = data.get("user_id")
                     st.session_state["logged_in"] = True
-                    set_cookie("user_id", data.get("user_id"))
+                    # set_cookie("user_id", data.get("user_id"))
                     st.experimental_rerun()
                 else:
                     st.error("Username or password is incorrect.")
@@ -331,6 +338,7 @@ def show_user_activity_page():
                 st.session_state.show_new_memo = False
                 st.experimental_rerun()  # Refresh the page to show the new memo
 
+
     st.title("Memo")
     st.markdown("<div style='font-size:18px;'>Manage your memos here:</div> <br>", unsafe_allow_html=True)
 
@@ -497,6 +505,7 @@ def show_item_user_analysis_page():
     # 유저 정보를 가져올 API 엔드포인트
     api_url = base_url + "users"
     df = fetch_data(api_url)
+    df = df[df['role'] != 'admin']
 
     if not df.empty:
         # Select box를 통해 아이템 선택
@@ -613,6 +622,8 @@ def show_best_score_distribution_page():
     
     api_url = base_url + "users"
     df = fetch_data(api_url)
+    df = df[df['role'] != 'admin']
+
 
     if not df.empty:
         # 베스트 스코어별 유저 수를 시각화
@@ -795,7 +806,7 @@ def show_visualization_page():
     if st.sidebar.button("Logout"):
         st.session_state["logged_in"] = False
         st.session_state["user_id"] = None
-        delete_cookie("user_id")
+        # delete_cookie("user_id")
         st.experimental_rerun()
         
     if page == "Main":
