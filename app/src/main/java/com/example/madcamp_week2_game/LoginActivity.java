@@ -27,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private static final String BASE_URL_SERVER = "http://172.10.7.97:80/api/";
-    private static final String BASE_URL_WEATHER = "http://apis.data.go.kr/";
 
     private EditText usernameEditText;
     private EditText passwordEditText;
