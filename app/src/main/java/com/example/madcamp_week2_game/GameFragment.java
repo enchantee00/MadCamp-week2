@@ -1,6 +1,5 @@
 package com.example.madcamp_week2_game;
 
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -39,8 +38,11 @@ public class GameFragment extends Fragment {
     private Retrofit retrofit = RetrofitClient.getClient(BASE_URL);
     private GameApi gameApi = retrofit.create(GameApi.class);
 
-    private ImageView player;
+    private int Raining;
+    private int sky;
     private ImageView ground;
+
+    private ImageView player;
     private ImageView itemSlowDown;
     private TextView itemSlowDownCountText;
     private ImageView itemNoBomb;
@@ -89,8 +91,19 @@ public class GameFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
 
+        rootLayout = view.findViewById(R.id.rootLayout);
+        scoreText = view.findViewById(R.id.scoreText);
+        levelText = view.findViewById(R.id.levelText);
+
         player = view.findViewById(R.id.player);
         ground = view.findViewById(R.id.ground);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            Raining = args.getInt("Raining");
+            sky = args.getInt("sky");
+        }
+        updateBackgroundAndGround();
 
         itemSlowDown = view.findViewById(R.id.itemSlowDown);
         itemSlowDownCountText = view.findViewById(R.id.itemSlowDownCountText);
@@ -110,10 +123,6 @@ public class GameFragment extends Fragment {
             itemTriplePointsCountText.setVisibility(View.GONE);
         }
         updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
-
-        rootLayout = view.findViewById(R.id.rootLayout);
-        scoreText = view.findViewById(R.id.scoreText);
-        levelText = view.findViewById(R.id.levelText);
 
         TextView startButton = view.findViewById(R.id.startButton);
         TextView restartButton = view.findViewById(R.id.restartButton);
@@ -207,16 +216,6 @@ public class GameFragment extends Fragment {
             }, 100);
         });
 
-//        itemSlowDown.setOnClickListener(v -> {
-//            if (!isItemSlowDownActive && itemSlowDownCount > 0) {
-//                isItemSlowDownActive = true;
-//                itemSlowDownCount--;
-//                itemSlowDown.setImageResource(R.drawable.item_slowdown_gray);
-//                itemSlowDownCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
-//                updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
-//                slowDownFoods();
-//            }
-//        });
         itemSlowDown.setOnClickListener(v -> {
             if (!isItemSlowDownActive && itemSlowDownCount > 0) {
                 isItemSlowDownActive = true;
@@ -227,9 +226,9 @@ public class GameFragment extends Fragment {
 
                 slowDownFoods();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
+                Log.d("millisecs - item1", String.valueOf(pressed_ts));
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 1);
@@ -260,9 +259,8 @@ public class GameFragment extends Fragment {
 
                 activateNoBombShield();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 2);
@@ -300,9 +298,8 @@ public class GameFragment extends Fragment {
 
                 activateTriplePoints();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 4);
@@ -332,9 +329,8 @@ public class GameFragment extends Fragment {
                 updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
                 activateBiggerFood();
 
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-                String pressed_ts = now.format(formatter);
+                long pressed_ms = System.currentTimeMillis();
+                long pressed_ts = pressed_ms - turn.getStartTime();
 
                 if (user != null) {
                     RequestItemClick requestItemClick = new RequestItemClick(user.getId(), turn.getId(), pressed_ts, 3);
@@ -363,6 +359,27 @@ public class GameFragment extends Fragment {
 
         return view;
     }
+
+    private void updateBackgroundAndGround() {
+        if (Raining != 0) {
+            if (Raining == 1 || Raining == 2 || Raining == 5) {
+//                rootLayout.setBackgroundResource(R.drawable.background_rainy);
+            } else if (Raining == 3 || Raining == 6 || Raining == 7) {
+//                rootLayout.setBackgroundResource(R.drawable.background_snowy);
+                ground.setImageResource(R.drawable.ground_snow);
+            }
+        } else {
+            if (sky == 1) {
+//                rootLayout.setBackgroundResource(R.drawable.background_sunny);
+            } else if (sky == 3 || sky == 4) {
+//                rootLayout.setBackgroundResource(R.drawable.background_cloudy);
+            }
+        }
+        if (Raining == 0 && sky == 0) {
+            rootLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+        }
+    }
+
     private void initializeGame() {
         score = 0;
         lives = 5;
@@ -380,13 +397,20 @@ public class GameFragment extends Fragment {
         initializeGame();
         startTime = System.currentTimeMillis();
 
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        String started_ts = now.format(formatter);
+        Log.d(TAG, started_ts);
+
         if (user != null) {
-            RequestTurnStart requestTurnStart = new RequestTurnStart(user.getId(), 1);
+            RequestTurnStart requestTurnStart = new RequestTurnStart(user.getId(), 1, started_ts);
             Call<JsonObject> call = gameApi.startTurn(requestTurnStart);
+            Log.d("game start request", String.valueOf(call));
             call.enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    if (response.isSuccessful() && response.body() != null) {
+                    Log.d("game start response", response.toString());
+                    if (response.isSuccessful()) {
                         JsonObject jsonResponse = response.body();
                         turn = new TurnDTO(jsonResponse.get("turn_id").getAsInt(), user.getId(), startTime);
                     } else {
@@ -695,17 +719,20 @@ public class GameFragment extends Fragment {
                 dropInterval = 1000;
                 break;
             case 2:
-                dropSpeed = 2700;
+                dropSpeed = 2500;
                 dropInterval = 800;
                 break;
             case 3:
-                dropSpeed = 2400;
+                dropSpeed = 2000;
                 dropInterval = 600;
                 break;
             case 4:
-            case 5:
-                dropSpeed = 2400;
+                dropSpeed = 1500;
                 dropInterval = 600;
+                break;
+            case 5:
+                dropSpeed = 1300;
+                dropInterval = 500;
                 break;
         }
         Log.d(TAG, "drop speed after being changed: " + dropSpeed);

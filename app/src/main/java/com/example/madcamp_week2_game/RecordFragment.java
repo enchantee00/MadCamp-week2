@@ -4,13 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.gson.JsonObject;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -23,6 +28,7 @@ public class RecordFragment extends Fragment {
     private UserDTO user;
 
     private TextView userNameTextView;
+    private EditText userNameEditText;
     private TextView bestScoreTextView;
     private TextView pointTextView;
 
@@ -50,8 +56,11 @@ public class RecordFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_record, container, false);
+        RelativeLayout mainLayout = view.findViewById(R.id.recordLayout);
+        mainLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
 
         userNameTextView = view.findViewById(R.id.userNameTextView);
+        userNameEditText = view.findViewById(R.id.userNameEditText);
         bestScoreTextView = view.findViewById(R.id.bestScoreTextView);
         pointTextView = view.findViewById(R.id.pointTextView);
 
@@ -89,6 +98,22 @@ public class RecordFragment extends Fragment {
             pointTextView.setText("Point: " + String.valueOf(user.getPoint()));
             updateItemCounts();
         }
+
+        userNameTextView.setOnClickListener(v-> {
+            userNameTextView.setVisibility(View.GONE);
+            userNameEditText.setText(userNameTextView.getText());
+            userNameEditText.setVisibility(View.VISIBLE);
+            userNameEditText.requestFocus();
+        });
+
+        userNameEditText.setOnEditorActionListener((v1, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                String newUserName = userNameEditText.getText().toString();
+                updateUserName(newUserName);
+                return true;
+            }
+            return false;
+        });
 
         itemSlowDownPlus.setOnClickListener(v-> {
             itemSlowDownBuyCount++;
@@ -140,6 +165,40 @@ public class RecordFragment extends Fragment {
         buyItemBiggerFoodButton.setOnClickListener(v -> buyItem("biggerFood"));
 
         return view;
+    }
+
+    private void updateUserName(String newUserName) {
+        userNameEditText.setVisibility(View.GONE);
+        userNameTextView.setText(newUserName);
+        userNameTextView.setVisibility(View.VISIBLE);
+
+        if (user != null) {
+            user.setUsername(newUserName);
+            RequestUpdateUser requestUpdateUser = new RequestUpdateUser(user.getId(), newUserName);
+            Retrofit retrofit = RetrofitClient.getClient(BASE_URL);
+            GameApi gameApi = retrofit.create(GameApi.class);
+            Call<JsonObject> call = gameApi.updateUserName(requestUpdateUser);
+            call.enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        JsonObject jsonResponse = response.body();
+                        if ("success".equals(jsonResponse.get("status").getAsString())) {
+//                            Toast.makeText(getContext(), "Username updated successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to update username", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to update username", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void buyItem(String itemType) {

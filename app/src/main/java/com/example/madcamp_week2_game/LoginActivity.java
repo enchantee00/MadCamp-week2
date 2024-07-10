@@ -1,6 +1,9 @@
 package com.example.madcamp_week2_game;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -8,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.gson.JsonObject;
 
@@ -19,15 +23,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "LoginActivity";
-    private static final String BASE_URL = "http://172.10.7.97:80/api/";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    private Retrofit retrofit = RetrofitClient.getClient(BASE_URL);
-    private GameApi gameApi = retrofit.create(GameApi.class);
+    private static final String TAG = "LoginActivity";
+    private static final String BASE_URL_SERVER = "http://172.10.7.97:80/api/";
+    private static final String BASE_URL_WEATHER = "http://apis.data.go.kr/";
 
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
+
+    private String base_date;
+    private String base_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +46,34 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
 
         loginButton.setOnClickListener(v -> login());
+
+        // get permission from user
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Toast.makeText(this, "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void login() {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
+        Retrofit retrofit_server = RetrofitClient.getClient("http://172.10.7.97:80/api/");
+        GameApi gameApi_server = retrofit_server.create(GameApi.class);
         RequestLogin requestLogin = new RequestLogin(username, password);
-        Call<JsonObject> call = gameApi.login(requestLogin);
+
+        Call<JsonObject> call = gameApi_server.login(requestLogin);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -64,20 +91,21 @@ public class LoginActivity extends AppCompatActivity {
                             jsonResponse.get("item_big_size").getAsInt()
                     );
                     UserManager.getInstance().setUser(userDTO);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
-                    Log.d(TAG, "Fail to login");
+                    Toast.makeText(LoginActivity.this, "Fail to login", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 Log.d(TAG, "Error: " + t.getMessage());
+                Toast.makeText(LoginActivity.this, "Fail to login", Toast.LENGTH_SHORT).show();
             }
         });
         // UserDTO userDTO = new UserDTO(8,"daemo", 1385, 5130, 5, 5, 3, 3);
 
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
     }
 }
