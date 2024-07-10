@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <ImageView
+                android:id="@+id/food1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/food1" />
+
+            <ImageView
+                android:id="@+id/food2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/food2" />
+
+            <ImageView
+                android:id="@+id/food3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/food3" />
+
+            <ImageView
+                android:id="@+id/food4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/food4" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>
