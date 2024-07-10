@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             v.postDelayed(() -> {
                 RelativeLayout mainLayout = findViewById(R.id.main_layout);
                 mainLayout.setBackgroundResource(0);
+                mainLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
                 loadFragment(new RecordFragment());
                 buttonLayout.setVisibility(View.GONE);
                 fragmentContainer.setVisibility(View.VISIBLE);
@@ -183,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateBackground() {
         // for testing
-        Raining = 6;
-        sky = 1;
+        //Raining = 6;
+        //sky = 3;
         //
         RelativeLayout mainLayout = findViewById(R.id.main_layout);
         if (Raining != 0) {

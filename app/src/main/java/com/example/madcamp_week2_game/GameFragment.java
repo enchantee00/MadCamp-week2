@@ -116,13 +116,19 @@ public class GameFragment extends Fragment {
 
         updateItemCount(itemSlowDown, itemSlowDownCountText, itemSlowDownCount);
         updateItemCount(itemNoBomb, itemNoBombCountText, itemNoBombCount);
-        if (itemTriplePointsCount > 0) {
-            itemTriplePointsCountText.setText("x" + itemTriplePointsCount);
-        } else {
-            itemTriplePoints.setVisibility(View.GONE);
-            itemTriplePointsCountText.setVisibility(View.GONE);
-        }
+        itemTriplePointsCountText.setText("x" + itemTriplePointsCount);
         updateItemCount(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount);
+
+        updateItemState(itemSlowDown, itemSlowDownCountText, itemSlowDownCount, R.drawable.item_slowdown, R.drawable.item_slowdown_gray);
+        updateItemState(itemNoBomb, itemNoBombCountText, itemNoBombCount, R.drawable.item_nobomb, R.drawable.item_nobomb_gray);
+        if (itemTriplePointsCount > 0) {
+            itemTriplePoints.setTextColor(getResources().getColor(android.R.color.black));
+            itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.black));
+        } else {
+            itemTriplePoints.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+        updateItemState(itemBiggerFood, itemBiggerFoodCountText, itemBiggerFoodCount, R.drawable.item_biggerfood, R.drawable.item_biggerfood_gray);
 
         TextView startButton = view.findViewById(R.id.startButton);
         TextView restartButton = view.findViewById(R.id.restartButton);
@@ -289,12 +295,10 @@ public class GameFragment extends Fragment {
                 itemTriplePoints.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
 
-                if (itemTriplePointsCount > 0) {
-                    itemTriplePointsCountText.setText("x" + itemTriplePointsCount);
-                } else {
-                    itemTriplePoints.setVisibility(View.GONE);
-                    itemTriplePointsCountText.setVisibility(View.GONE);
-                }
+                itemTriplePointsCountText.setText("x" + itemTriplePointsCount);
+                //itemTriplePoints.setVisibility(View.GONE);
+                //itemTriplePointsCountText.setVisibility(View.GONE);
+
 
                 activateTriplePoints();
 
@@ -625,8 +629,13 @@ public class GameFragment extends Fragment {
         handler.postDelayed(() -> {
             pointMultiplier = 1;
             isItemTriplePointsActive = false;
-            itemTriplePoints.setTextColor(getResources().getColor(android.R.color.black));
-            itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.black));
+            if (itemTriplePointsCount > 0) {
+                itemTriplePoints.setTextColor(getResources().getColor(android.R.color.black));
+                itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.black));
+            } else {
+                itemTriplePoints.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                itemTriplePointsCountText.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            }
         }, 10000);
     }
 
@@ -658,12 +667,9 @@ public class GameFragment extends Fragment {
     }
 
     private void updateItemCount(ImageView item, TextView itemCountText, int itemCount) {
-        if (itemCount > 0) {
-            itemCountText.setText("x" + itemCount);
-        } else {
-            item.setVisibility(View.GONE);
-            itemCountText.setVisibility(View.GONE);
-        }
+        itemCountText.setText("x" + itemCount);
+        //item.setVisibility(View.GONE);
+        //itemCountText.setVisibility(View.GONE);
     }
 
     private void updateItemState(ImageView item, TextView itemCountText, int itemCount, int imageResId, int imageResIdGray) {
