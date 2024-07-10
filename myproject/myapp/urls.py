@@ -1,7 +1,7 @@
 # myapp/urls.py
 from django.urls import path, include
 # from rest_framework.routers import DefaultRouter
-from .views import LoginView, UserListView, GameItemClickView, GameStartView, GameEndView, GameItemBuyView, Item1PressedView, Item2PressedView, Item3PressedView, Item4PressedView, AppLoginView, QueryView, EventTurnListView, ProfileModifyView
+from .views import LoginView, UserListView, GameItemClickView, GameStartView, GameEndView, GameItemBuyView, Item1PressedView, Item2PressedView, Item3PressedView, Item4PressedView, AppLoginView, QueryView, EventTurnListView, ProfileModifyView, MemoView
 
 # router = DefaultRouter()
 # router.register(r'items', ItemViewSet)
@@ -23,5 +23,8 @@ urlpatterns = [
     path('item4/pressed', Item4PressedView.as_view(), name='item4-pressed'),
     path('users', UserListView.as_view(), name='user-list'),
     path('query', QueryView().as_view(), name='query-freely'),
-    path('turn/start', EventTurnListView.as_view(), name='event-turn-list')
+    path('turn/start', EventTurnListView.as_view(), name='event-turn-list'),
+    path('memos/page/<str:page>', MemoView.as_view(), name='list_memos'),  # GET
+    path('memos', MemoView.as_view(), name='create_memo'),  # POST
+    path('memos/<int:pk>', MemoView.as_view(), name='modify_memo')  # PUT/PATCH/DELETE
 ]

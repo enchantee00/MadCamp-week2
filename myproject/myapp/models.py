@@ -57,3 +57,13 @@ class EventItemTriplePoints(models.Model):
 
     class Meta:
         db_table = 'event_item_triple_points'
+        
+        
+class Memo(models.Model):
+    page = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'memos'
