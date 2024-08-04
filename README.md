@@ -29,11 +29,11 @@
 
 ---
 
-|      정지윤       |          김이겸         |                                                                                                       
+|      김이겸       |          정지윤         |                                                                                                       
 | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
-|   <img width="100px" src="https://github.com/enchantee00/MadCamp-week1/assets/62553866/67b24f11-2c48-4704-ac34-6c3be41c9982" />    |                      <img width="100px" src="https://github.com/user-attachments/assets/5837356f-e9d2-4137-abd0-8bb8255b5efb" />    |
-|   [@enchantee00](https://github.com/enchantee00)   |    [@inthelongestday](https://github.com/inthelongestday)  |
-| 부산대학교 정보컴퓨터공학부 3학년 | 카이스트 전산학부 4학년 |
+|   <img width="100px" src="https://github.com/user-attachments/assets/5837356f-e9d2-4137-abd0-8bb8255b5efb" />    |                      <img width="100px" src="https://github.com/enchantee00/MadCamp-week1/assets/62553866/67b24f11-2c48-4704-ac34-6c3be41c9982" />    |
+|   [@inthelongestday](https://github.com/inthelongestday)   |    [@enchantee00](https://github.com/enchantee00)  |
+| 카이스트 전산학부 4학년 |  부산대학교 정보컴퓨터공학부 3학년 |
 
 <br>
 <br>   
